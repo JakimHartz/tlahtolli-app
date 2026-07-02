@@ -1,24 +1,17 @@
-# Tlahtolli 🗣️📙
+# tlahtolli_app
 
-**Tlahtolli** (del vocablo náhuatl: *palabra*, *lengua* o *discurso*) es un proyecto de aplicación móvil nativa desarrollado en **Flutter** para el sistema operativo Android. Su objetivo principal es servir como un puente lingüístico y cultural mediante la traducción bidireccional entre el idioma **Náhuatl** y el **Español**, incluyendo la transcripción fonética de los términos consultados.
+A new Flutter project.
 
-Este proyecto ha sido desarrollado como propuesta para la evaluación del **Proyecto Ordinario (40%)** en la materia de *Programación de Dispositivos Móviles*.
+## Getting Started
 
-## 🚀 Características Principales
+This project is a starting point for a Flutter application.
 
-- **Traducción Bidireccional:** Soporte completo para flujos Español ↔ Náhuatl.
-- **Transcripción Fonética:** Guía de pronunciación basada en caracteres fonéticos normalizados.
-- **Funcionamiento Offline (Persistencia Local):** Base de datos relacional interna en SQLite para almacenar de forma persistente el historial de búsquedas y una sección de términos favoritos (esencial para zonas con baja conectividad).
-- **Consumo Asíncrono de Datos:** Conexión remota a una API REST para la obtención y actualización de diccionarios en tiempo real en formato JSON.
+A few resources to get you started if this is your first Flutter project:
 
-## 🏗️ Arquitectura y Tecnologías
+- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
+- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
 
-El proyecto implementa de manera estricta el patrón arquitectónico **MVVM (Model-View-ViewModel)** para garantizar una separación limpia entre la interfaz de usuario y la lógica de negocio.
-
-- **Framework:** Flutter (Dart)
-- **Base de Datos Local:** SQLite (`sqflite` package)
-- **Consumo HTTP:** `http` / API REST JSON
-- **Diseño UI/UX:** Paleta basada en la identidad institucional universitaria (`#670300`) combinada con acentos verde turquesa/jade prehispánico (`#26A69A`).
-
----
-*Desarrollado como evidencia académica - Periodo Escolar 2025-2026B.*
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
