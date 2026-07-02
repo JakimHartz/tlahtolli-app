@@ -22,6 +22,7 @@ El proyecto implementa de manera estricta el patrón arquitectónico **MVVM (Mod
 
 ## Estructura de Carpetas (lib/)
 
+```
 lib/
 │
 ├── main.dart                     # Punto de entrada de la aplicación
@@ -56,6 +57,7 @@ lib/
     │   └── historial_screen.dart # Historial cronológico de búsquedas
     └── widgets/
         └── custom_bottom_nav.dart # Barra de navegación compartida
+```
 
 ---
-*Desarrollado como evidencia académica - Periodo Escolar 2025-2026B.*
+*Periodo Escolar 2025-2026B.*
