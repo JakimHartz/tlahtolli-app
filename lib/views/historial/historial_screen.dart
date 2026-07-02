@@ -73,7 +73,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
 
                 return Card(
                   color: Colors.white,
-                  margin: const EdgeInsets.bottom(10),
+                  margin: const EdgeInsets.only(bottom: 10),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

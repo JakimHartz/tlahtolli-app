@@ -140,4 +140,36 @@ class _ResultadoScreenState extends State<ResultadoScreen> {
                         Text(
                           'Pronunciación: ${widget.palabra.transcripcionFonetica}',
                           style: TextStyle(
-                            fontSize: 13
+                            fontSize: 13, 
+                            fontStyle: FontStyle.italic, 
+                            color: Colors.grey.shade800,
+                            fontFamily: 'monospace' // Ideal para caracteres AFI especiales
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 30),
+            
+            // Mensaje informativo contextual sobre persistencia
+            if (widget.palabra.idPalabra != null)
+              Row(
+                children: [
+                  Icon(Icons.offline_pin_rounded, size: 16, color: Colors.grey.shade500),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Consulta guardada localmente en el historial.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

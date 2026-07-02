@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'viewmodels/traductor_viewmodel.dart';
-import 'views/inicio/traductor_screen.dart';
 import 'views/widgets/custom_bottom_nav.dart'; // Importamos la nueva pantalla de navegación
 
 void main() {

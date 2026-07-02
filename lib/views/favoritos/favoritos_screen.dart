@@ -8,18 +8,18 @@ class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});
 
   @override
-  State<FavoritosScreen> createState() => _FavoritosScreenState();
+  State<FavoritosScreen> createState() => _FavoritosScreenState(); // <-- Aseguramos este nombre
 }
 
-class _ReverseFavListState extends State<FavoritosScreen> {
+class _FavoritosScreenState extends State<FavoritosScreen> { // <-- Cambiado aquí
   @override
   void initState() {
     super.initState();
-    // Forzamos la recarga de datos al montar la pantalla para reflejar cambios inmediatos
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TraductorViewModel>(context, listen: false).cargarFavoritos();
     });
   }
+// ... El resto del código sigue igual hasta llegar al Card de abajo
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class _ReverseFavListState extends State<FavoritosScreen> {
 
                 return Card(
                   color: Colors.white,
-                  margin: const EdgeInsets.bottom(12),
+                  margin: const EdgeInsets.only(bottom: 12),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),

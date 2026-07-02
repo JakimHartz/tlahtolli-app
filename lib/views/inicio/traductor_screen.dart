@@ -159,7 +159,7 @@ class _TraductorScreenState extends State<TraductorScreen> {
                 child: Text(
                   vm.mensajeError!,
                   style: TextStyle(color: Colors.red.shade900, fontSize: 14),
-                  textAlign: Center,
+                  textAlign: TextAlign.center, // <-- Corregido aquí
                 ),
               ),
           ],
