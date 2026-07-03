@@ -27,9 +27,6 @@ class _TraductorScreenState extends State<TraductorScreen> {
     // Simulación de red: asumimos que hay internet
     const bool tieneInternetSimulado = true;
 
-    // 🛠️ ¡CORRECCIÓN AQUÍ!: Le pasamos la dirección real activa (vm.direccionTraduccion)
-    // Nota: Revisa si tu método en el ViewModel acepta la dirección como tercer parámetro.
-    // Si tu método ejecutarTraduccion solo acepta 2 parámetros, asegúrate de que internamente use su propia variable de dirección.
     await vm.ejecutarTraduccion(query, tieneInternetSimulado);
 
     if (vm.mensajeError == null && vm.resultados.isNotEmpty) {
@@ -69,7 +66,7 @@ class _TraductorScreenState extends State<TraductorScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 10),
-            
+
             // Selector / Alternador de Idioma (UI/UX Moderna)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -102,7 +99,7 @@ class _TraductorScreenState extends State<TraductorScreen> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 30),
 
             // Entrada de Texto
@@ -120,17 +117,17 @@ class _TraductorScreenState extends State<TraductorScreen> {
                 prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primaryColor),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear_rounded),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {});
-                        },
-                      )
+                  icon: const Icon(Icons.clear_rounded),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() {});
+                  },
+                )
                     : null,
               ),
               onChanged: (text) => setState(() {}),
             ),
-            
+
             const SizedBox(height: 24),
 
             // Botón de Acción Principal (Estilizado con Guinda)
@@ -138,14 +135,29 @@ class _TraductorScreenState extends State<TraductorScreen> {
               onPressed: vm.estaCargando ? null : () => _procesarBusqueda(vm),
               child: vm.estaCargando
                   ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                    )
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+              )
                   : const Text(
-                      'TRADUCIR',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 1),
-                    ),
+                'TRADUCIR',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 1),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Imagen ilustrativa debajo del botón TRADUCIR.
+            // BoxFit.contain conserva la proporción original de tu PNG (no se
+            // deforma ni se estira), y el ConstrainedBox limita qué tan alta
+            // se puede ver en pantallas grandes (tablets) sin recortar nada.
+            // Cambia la ruta por el nombre real de tu archivo.
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 220),
+              child: Image.asset(
+                'assets/images/quetzalli.png',
+                fit: BoxFit.contain,
+              ),
             ),
 
             const SizedBox(height: 20),
@@ -162,7 +174,7 @@ class _TraductorScreenState extends State<TraductorScreen> {
                 child: Text(
                   vm.mensajeError!,
                   style: TextStyle(color: Colors.red.shade900, fontSize: 14),
-                  textAlign: TextAlign.center, // <-- Corregido aquí
+                  textAlign: TextAlign.center,
                 ),
               ),
           ],

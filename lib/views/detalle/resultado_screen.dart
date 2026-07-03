@@ -37,7 +37,7 @@ class _ResultadoScreenState extends State<ResultadoScreen> {
   void _compartirTraduccion() {
     final palabra = widget.palabra;
     final String texto =
-        'Tlahtolli 🗣️ — Traducción\n\n'
+        'Tlahtolli 💬 — Traducción\n\n'
         'Español: ${palabra.terminoEspanol}\n'
         'Náhuatl: ${palabra.terminoNahuatl}\n'
         'Pronunciación: ${palabra.transcripcionFonetica}';
