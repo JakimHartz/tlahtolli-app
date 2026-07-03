@@ -99,6 +99,8 @@ class DbHelper {
       {'termino_espanol': 'hablar', 'termino_nahuatl': 'tlahtoa', 'transcripcion_fonetica': '[t͡ɬaʔˈto.a]'},
       {'termino_espanol': 'comer', 'termino_nahuatl': 'tlacua', 'transcripcion_fonetica': '[ˈt͡ɬa.kʷa]'},
       {'termino_espanol': 'conejo', 'termino_nahuatl': 'tochtli', 'transcripcion_fonetica': '[ˈtot͡ʃ.t͡ɬi]'},
+      {'termino_espanol': 'palabra', 'termino_nahuatl': 'tlahtolli', 'transcripcion_fonetica': '[t͡ɬaɁˈtoː.lːi]'},
+      {'termino_espanol': 'escuela', 'termino_nahuatl': 'caltlamachtiloyan', 'transcripcion_fonetica': '[kaɬ.tɬa.matʃ.tiˈlo.jan]'},
     ];
 
     for (final palabra in diccionarioBase) {
