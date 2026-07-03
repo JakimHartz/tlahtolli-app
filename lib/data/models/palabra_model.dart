@@ -12,8 +12,6 @@ class PalabraModel {
   });
 
   /// **1. De Objeto a Map (Serialización para SQLite)**
-  /// Transforma las propiedades de la clase a un mapa de datos compatible 
-  /// con los campos de la tabla `palabra` en sqflite.
   Map<String, dynamic> toMap() {
     return {
       if (idPalabra != null) 'id_palabra': idPalabra,
@@ -24,8 +22,6 @@ class PalabraModel {
   }
 
   /// **2. De Map a Objeto (Deserialización desde SQLite)**
-  /// Construye una instancia limpia de PalabraModel usando los datos extraídos 
-  /// tras una consulta relacional en la base de datos local.
   factory PalabraModel.fromMap(Map<String, dynamic> map) {
     return PalabraModel(
       idPalabra: map['id_palabra'] as int?,
@@ -36,14 +32,19 @@ class PalabraModel {
   }
 
   /// **3. De JSON a Objeto (Deserialización desde la API REST)**
-  /// Lee la estructura interna del payload JSON devuelto por el servidor cloud.
-  /// Mapea de forma segura los atributos externos con las propiedades de Flutter.
+  ///
+  /// CORREGIDO: antes se leía la llave 'transcripcion_fonetica', pero el
+  /// diccionario del servicio (y ahora también la API real) puede variar
+  /// el nombre de la llave. Usamos '??' para aceptar ambas variantes y
+  /// evitar que un cambio de nombre en el backend vuelva a romper la app.
   factory PalabraModel.fromJson(Map<String, dynamic> json) {
     return PalabraModel(
-      idPalabra: null, // Las palabras nuevas de la API no tienen ID local asignado aún
+      idPalabra: null, // Las palabras nuevas de la API no tienen ID local aún
       terminoEspanol: json['termino_espanol'] as String,
       terminoNahuatl: json['termino_nahuatl'] as String,
-      transcripcionFonetica: json['transcripcion_fonetica'] as String,
+      transcripcionFonetica:
+          (json['transcripcion_fonetica'] ?? json['transcripcion_foneticas'])
+              as String,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/palabra_model.dart';
 import '../../viewmodels/traductor_viewmodel.dart';
@@ -26,6 +27,26 @@ class _ResultadoScreenState extends State<ResultadoScreen> {
     }
   }
 
+  /// **Exportar / Compartir la traducción actual como texto plano**
+  ///
+  /// Arma un mensaje legible con el término en español, náhuatl y su
+  /// transcripción fonética, y abre el selector nativo de Android para
+  /// enviarlo por WhatsApp, correo, SMS, etc. share_plus se encarga de
+  /// generar internamente el Intent de compartir de Android (no requiere
+  /// crear un archivo .txt para esto; el texto se envía directo).
+  void _compartirTraduccion() {
+    final palabra = widget.palabra;
+    final String texto =
+        'Tlahtolli 🗣️ — Traducción\n\n'
+        'Español: ${palabra.terminoEspanol}\n'
+        'Náhuatl: ${palabra.terminoNahuatl}\n'
+        'Pronunciación: ${palabra.transcripcionFonetica}';
+
+    SharePlus.instance.share(
+      ShareParams(text: texto, subject: 'Traducción Tlahtolli'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<TraductorViewModel>(context);
@@ -40,6 +61,12 @@ class _ResultadoScreenState extends State<ResultadoScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
+          // Botón de compartir: exporta la traducción hacia otras apps
+          IconButton(
+            icon: const Icon(Icons.share_rounded, color: Colors.white, size: 24),
+            tooltip: 'Compartir traducción',
+            onPressed: _compartirTraduccion,
+          ),
           // Botón de estrella interactivo conectado a SQLite
           if (widget.palabra.idPalabra != null)
             IconButton(
@@ -152,8 +179,24 @@ class _ResultadoScreenState extends State<ResultadoScreen> {
                 ],
               ),
             ),
-            
-            const SizedBox(height: 30),
+
+            const SizedBox(height: 20),
+
+            // Botón de acción secundaria para compartir (alternativa visible
+            // al ícono del AppBar, útil para quien no note el ícono de arriba)
+            OutlinedButton.icon(
+              onPressed: _compartirTraduccion,
+              icon: const Icon(Icons.ios_share_rounded, size: 18),
+              label: const Text('Compartir traducción'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.primaryColor,
+                side: const BorderSide(color: AppTheme.primaryColor),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+
+            const SizedBox(height: 20),
             
             // Mensaje informativo contextual sobre persistencia
             if (widget.palabra.idPalabra != null)

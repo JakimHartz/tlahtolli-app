@@ -38,10 +38,12 @@ dependencies:
   path: ^1.9.1
   http: ^1.6.0
   provider: ^6.1.5+1
+  share_plus: ^11.1.0   # NUEVO: para exportar/compartir la traducción a otras apps
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -91,3 +93,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21

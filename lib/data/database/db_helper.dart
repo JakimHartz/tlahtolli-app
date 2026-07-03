@@ -65,6 +65,45 @@ class DbHelper {
         FOREIGN KEY (id_palabra) REFERENCES palabra (id_palabra) ON DELETE CASCADE
       )
     ''');
+
+    // 4. NUEVO: Sembrado inicial del diccionario local.
+    // Así la app puede traducir SIN internet desde la primera vez que se abre,
+    // sin depender de que el usuario haya hecho antes una consulta en línea.
+    await _sembrarDiccionarioInicial(db);
+  }
+
+  Future<void> _sembrarDiccionarioInicial(Database db) async {
+    final List<Map<String, String>> diccionarioBase = [
+      {'termino_espanol': 'hola', 'termino_nahuatl': 'niltze', 'transcripcion_fonetica': '[ˈnil.tse]'},
+      {'termino_espanol': 'maiz', 'termino_nahuatl': 'cintli', 'transcripcion_fonetica': '[ˈsin.t͡ɬi]'},
+      {'termino_espanol': 'sol', 'termino_nahuatl': 'tonatiuh', 'transcripcion_fonetica': '[toˈna.tiw]'},
+      {'termino_espanol': 'agua', 'termino_nahuatl': 'atl', 'transcripcion_fonetica': '[ˈat͡ɬ]'},
+      {'termino_espanol': 'casa', 'termino_nahuatl': 'calli', 'transcripcion_fonetica': '[ˈkal.li]'},
+      {'termino_espanol': 'madre', 'termino_nahuatl': 'nantli', 'transcripcion_fonetica': '[ˈnan.t͡ɬi]'},
+      {'termino_espanol': 'padre', 'termino_nahuatl': 'tahtli', 'transcripcion_fonetica': '[ˈtaʔ.t͡ɬi]'},
+      {'termino_espanol': 'perro', 'termino_nahuatl': 'chichi', 'transcripcion_fonetica': '[ˈt͡ʃi.t͡ʃi]'},
+      {'termino_espanol': 'flor', 'termino_nahuatl': 'xochitl', 'transcripcion_fonetica': '[ˈʃoː.t͡ʃit͡ɬ]'},
+      {'termino_espanol': 'tierra', 'termino_nahuatl': 'tlalli', 'transcripcion_fonetica': '[ˈt͡ɬal.li]'},
+      {'termino_espanol': 'viento', 'termino_nahuatl': 'ehecatl', 'transcripcion_fonetica': '[eˈe.kat͡ɬ]'},
+      {'termino_espanol': 'luna', 'termino_nahuatl': 'metztli', 'transcripcion_fonetica': '[ˈmets.t͡ɬi]'},
+      {'termino_espanol': 'estrella', 'termino_nahuatl': 'citlalin', 'transcripcion_fonetica': '[siˈtɬa.lin]'},
+      {'termino_espanol': 'cielo', 'termino_nahuatl': 'ilhuicatl', 'transcripcion_fonetica': '[ilˈwi.kat͡ɬ]'},
+      {'termino_espanol': 'arbol', 'termino_nahuatl': 'cuahuitl', 'transcripcion_fonetica': '[ˈkʷa.wit͡ɬ]'},
+      {'termino_espanol': 'piedra', 'termino_nahuatl': 'tetl', 'transcripcion_fonetica': '[ˈtet͡ɬ]'},
+      {'termino_espanol': 'fuego', 'termino_nahuatl': 'tletl', 'transcripcion_fonetica': '[ˈtlet͡ɬ]'},
+      {'termino_espanol': 'dia', 'termino_nahuatl': 'tonalli', 'transcripcion_fonetica': '[toˈnal.li]'},
+      {'termino_espanol': 'noche', 'termino_nahuatl': 'yohualli', 'transcripcion_fonetica': '[joˈwal.li]'},
+      {'termino_espanol': 'amigo', 'termino_nahuatl': 'icniuhtli', 'transcripcion_fonetica': '[ikˈnjuʔ.t͡ɬi]'},
+      {'termino_espanol': 'bueno', 'termino_nahuatl': 'cualli', 'transcripcion_fonetica': '[ˈkwal.li]'},
+      {'termino_espanol': 'grande', 'termino_nahuatl': 'hueyi', 'transcripcion_fonetica': '[ˈwe.ji]'},
+      {'termino_espanol': 'hablar', 'termino_nahuatl': 'tlahtoa', 'transcripcion_fonetica': '[t͡ɬaʔˈto.a]'},
+      {'termino_espanol': 'comer', 'termino_nahuatl': 'tlacua', 'transcripcion_fonetica': '[ˈt͡ɬa.kʷa]'},
+      {'termino_espanol': 'conejo', 'termino_nahuatl': 'tochtli', 'transcripcion_fonetica': '[ˈtot͡ʃ.t͡ɬi]'},
+    ];
+
+    for (final palabra in diccionarioBase) {
+      await db.insert('palabra', palabra);
+    }
   }
 
   // ==========================================
@@ -131,7 +170,7 @@ class DbHelper {
   // Marcar una palabra como favorita
   Future<int> agregarAFavoritos(int idPalabra) async {
     final db = await database;
-    
+
     // Validar primero si ya está agregada para evitar duplicar la tarjeta
     final List<Map<String, dynamic>> existe = await db.query(
       'favorito',

@@ -1,128 +1,60 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../../core/utils/constants.dart';
 import '../models/palabra_model.dart';
 
+/// Cliente HTTP que consume la API REST real (MockAPI por defecto).
+///
+/// El diccionario "hardcodeado" que tenía este archivo antes se eliminó:
+/// esas mismas palabras (y muchas más) ahora viven en /api_server/diccionario.json,
+/// listas para subirse a MockAPI con seed_mockapi.js. Un subconjunto también
+/// vive sembrado directamente en `db_helper.dart` para que la app traduzca
+/// sin internet desde el primer uso.
 class ApiService {
-  // Diccionario local estático de alta fidelidad para simular respuestas inmediatas de red
-  final List<Map<String, dynamic>> _diccionarioServidor = [
-    {
-      "id_palabra": 301,
-      "termino_espanol": "hola",
-      "termino_nahuatl": "niltze",
-      "transcripcion_fonetica": "[ˈnil.tse]"
-    },
-    {
-      "id_palabra": 302,
-      "termino_espanol": "maiz",
-      "termino_nahuatl": "cintli",
-      "transcripcion_fonetica": "[ˈsin.t͡ɬi]"
-    },
-    {
-      "id_palabra": 303,
-      "termino_espanol": "sol",
-      "termino_nahuatl": "tonatiuh",
-      "transcripcion_fonetica": "[toˈna.tiw]"
-    },
-    {
-      "id_palabra": 304,
-      "termino_espanol": "agua",
-      "termino_nahuatl": "atl",
-      "transcripcion_fonetica": "[ˈat͡ɬ]"
-    },
-    {
-      "id_palabra": 305,
-      "termino_espanol": "casa",
-      "termino_nahuatl": "calli",
-      "transcripcion_fonetica": "[ˈkal.li]"
-    },
-    {
-      "id_palabra": 306,
-      "termino_espanol": "madre",
-      "termino_nahuatl": "nantli",
-      "transcripcion_fonetica": "[ˈnan.t͡ɬi]"
-    },
-    {
-      "id_palabra": 307,
-      "termino_espanol": "perro",
-      "termino_nahuatl": "chichi",
-      "transcripcion_fonetica": "[ˈt͡ʃi.t͡ʃi]"
-    },
-    {
-      "id_palabra": 308,
-      "termino_espanol": "flor",
-      "termino_nahuatl": "xochitl",
-      "transcripcion_fonetica": "[ˈʃoː.t͡ʃit͡ɬ]"
-    },
-    {
-      "id_palabra": 309,
-      "termino_espanol": "tierra",
-      "termino_nahuatl": "tlalli",
-      "transcripcion_fonetica": "[ˈt͡ɬal.li]"
-    },
-    {
-      "id_palabra": 310,
-      "termino_espanol": "viento",
-      "termino_nahuatl": "ehecatl",
-      "transcripcion_fonetica": "[eˈe.kat͡ɬ]"
-    }
-  ];
-
-  /*Future<List<PalabraModel>> buscarTraduccionEnNube(String texto, String direccion) async {
-    // Simulamos un retraso de red de 400ms para mantener la UX de carga (Shimmer/CircularProgress)
-    await Future.delayed(const Duration(milliseconds: 400));
-
+  Future<List<PalabraModel>> buscarTraduccionEnNube(
+      String texto, String direccion) async {
     final String busqueda = texto.trim().toLowerCase();
-    List<PalabraModel> resultados = [];
-
-    for (var item in _diccionarioServidor) {
-      if (direccion == 'es_to_nah') {
-        if (item['termino_espanol'].toString().contains(busqueda)) {
-          resultados.add(PalabraModel.fromJson(item));
-        }
-      } else {
-        if (item['termino_nahuatl'].toString().contains(busqueda)) {
-          resultados.add(PalabraModel.fromJson(item));
-        }
-      }
-    }
-
-    if (resultados.isNotEmpty) {
-      return resultados;
-    } else {
-      throw Exception('No se encontraron coincidencias para esta búsqueda.');
-    }
-  }
-}*/
-
-  Future<List<PalabraModel>> buscarTraduccionEnNube(String texto,
-      String direccion) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-
-    final String busqueda = texto.trim().toLowerCase();
-// Convertimos a minúsculas y limpiamos guiones para evitar fallos de formato
     final String dirNormalizada = direccion.toLowerCase().replaceAll('-', '_');
 
-    List<PalabraModel> resultados = [];
+    // MockAPI: GET /palabras?search=texto
+    // "search" busca coincidencias parciales en TODOS los campos de texto
+    // del recurso (termino_espanol Y termino_nahuatl a la vez), así que
+    // luego filtramos en el cliente para quedarnos solo con las coincidencias
+    // del campo correcto según la dirección de traducción elegida.
+    final uri = Uri.parse('${AppConstants.apiBaseUrl}/palabras').replace(
+      queryParameters: {'search': busqueda},
+    );
 
-    for (var item in _diccionarioServidor) {
-// Si la dirección contiene 'es' primero, asumimos Español a Náhuatl
-      if (dirNormalizada.startsWith('es') ||
-          dirNormalizada.contains('to_nah')) {
-        if (item['termino_espanol'].toString().toLowerCase().contains(
-            busqueda)) {
-          resultados.add(PalabraModel.fromJson(item));
-        }
-      } else { // De lo contrario, asumimos Náhuatl a Español
-        if (item['termino_nahuatl'].toString().toLowerCase().contains(
-            busqueda)) {
-          resultados.add(PalabraModel.fromJson(item));
-        }
-      }
+    final http.Response respuesta;
+    try {
+      respuesta = await http.get(uri).timeout(AppConstants.apiTimeout);
+    } catch (e) {
+      // Sin internet, servidor caído, timeout, DNS, URL mal configurada, etc.
+      throw Exception('No se pudo conectar con el servidor.');
     }
 
-    if (resultados.isNotEmpty) {
-      return resultados;
-    } else {
+    if (respuesta.statusCode != 200) {
+      throw Exception(
+          'El servidor respondió con un error (${respuesta.statusCode}).');
+    }
+
+    final List<dynamic> lista = jsonDecode(utf8.decode(respuesta.bodyBytes));
+
+    final bool buscarEnEspanol =
+        dirNormalizada.startsWith('es') || dirNormalizada.contains('to_nah');
+    final String campo = buscarEnEspanol ? 'termino_espanol' : 'termino_nahuatl';
+
+    final List<dynamic> coincidencias = lista.where((item) {
+      final valor = (item[campo] ?? '').toString().toLowerCase();
+      return valor.contains(busqueda);
+    }).toList();
+
+    if (coincidencias.isEmpty) {
       throw Exception('No se encontraron coincidencias para esta búsqueda.');
     }
+
+    return coincidencias
+        .map((item) => PalabraModel.fromJson(item as Map<String, dynamic>))
+        .toList();
   }
 }
