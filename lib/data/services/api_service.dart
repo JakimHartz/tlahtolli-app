@@ -1,42 +1,128 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../models/palabra_model.dart';
 
 class ApiService {
-  // URL base de la API remota (puedes cambiarla por tu servidor o mock en el futuro)
-  static const String _baseUrl = 'https://api.tlahtolli-diccionario.com/v1';
+  // Diccionario local estático de alta fidelidad para simular respuestas inmediatas de red
+  final List<Map<String, dynamic>> _diccionarioServidor = [
+    {
+      "id_palabra": 301,
+      "termino_espanol": "hola",
+      "termino_nahuatl": "niltze",
+      "transcripcion_fonetica": "[ˈnil.tse]"
+    },
+    {
+      "id_palabra": 302,
+      "termino_espanol": "maiz",
+      "termino_nahuatl": "cintli",
+      "transcripcion_fonetica": "[ˈsin.t͡ɬi]"
+    },
+    {
+      "id_palabra": 303,
+      "termino_espanol": "sol",
+      "termino_nahuatl": "tonatiuh",
+      "transcripcion_fonetica": "[toˈna.tiw]"
+    },
+    {
+      "id_palabra": 304,
+      "termino_espanol": "agua",
+      "termino_nahuatl": "atl",
+      "transcripcion_fonetica": "[ˈat͡ɬ]"
+    },
+    {
+      "id_palabra": 305,
+      "termino_espanol": "casa",
+      "termino_nahuatl": "calli",
+      "transcripcion_fonetica": "[ˈkal.li]"
+    },
+    {
+      "id_palabra": 306,
+      "termino_espanol": "madre",
+      "termino_nahuatl": "nantli",
+      "transcripcion_fonetica": "[ˈnan.t͡ɬi]"
+    },
+    {
+      "id_palabra": 307,
+      "termino_espanol": "perro",
+      "termino_nahuatl": "chichi",
+      "transcripcion_fonetica": "[ˈt͡ʃi.t͡ʃi]"
+    },
+    {
+      "id_palabra": 308,
+      "termino_espanol": "flor",
+      "termino_nahuatl": "xochitl",
+      "transcripcion_fonetica": "[ˈʃoː.t͡ʃit͡ɬ]"
+    },
+    {
+      "id_palabra": 309,
+      "termino_espanol": "tierra",
+      "termino_nahuatl": "tlalli",
+      "transcripcion_fonetica": "[ˈt͡ɬal.li]"
+    },
+    {
+      "id_palabra": 310,
+      "termino_espanol": "viento",
+      "termino_nahuatl": "ehecatl",
+      "transcripcion_fonetica": "[eˈe.kat͡ɬ]"
+    }
+  ];
 
-  /// **Consumir la API para traducir un término**
-  /// [texto]: La palabra que escribió el usuario (ej: "hablar" o "tlahtoa").
-  /// [direccion]: Indica el flujo, ej: "es_to_nah" o "nah_to_es".
-  Future<List<PalabraModel>> buscarTraduccionEnNube(String texto, String direccion) async {
-    // Construimos la URL con los parámetros de búsqueda requeridos
-    final url = Uri.parse('$_baseUrl/traducir?query=$texto&dir=$direccion');
+  /*Future<List<PalabraModel>> buscarTraduccionEnNube(String texto, String direccion) async {
+    // Simulamos un retraso de red de 400ms para mantener la UX de carga (Shimmer/CircularProgress)
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    try {
-      // Realizamos la petición GET asíncrona con un tiempo límite de espera (timeout)
-      final response = await http.get(url).timeout(const Duration(seconds: 10));
+    final String busqueda = texto.trim().toLowerCase();
+    List<PalabraModel> resultados = [];
 
-      // Código 200 significa que el servidor respondió exitosamente
-      if (response.statusCode == 200) {
-        // Parseamos el cuerpo de la respuesta que viene codificado en UTF-8 (crucial para los acentos y caracteres heridos del Náhuatl)
-        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
-        
-        // Siguiendo la estructura del JSON diseñada en la documentación:
-        final List<dynamic> coincidencias = data['coincidencias'] ?? [];
-
-        // Mapeamos la lista de JSONs a una lista de objetos de tipo PalabraModel
-        return coincidencias.map((jsonItem) => PalabraModel.fromJson(jsonItem)).toList();
+    for (var item in _diccionarioServidor) {
+      if (direccion == 'es_to_nah') {
+        if (item['termino_espanol'].toString().contains(busqueda)) {
+          resultados.add(PalabraModel.fromJson(item));
+        }
       } else {
-        // Si el servidor responde con un error (ej: 404 o 500)
-        throw Exception('Error en el servidor remoto: ${response.statusCode}');
+        if (item['termino_nahuatl'].toString().contains(busqueda)) {
+          resultados.add(PalabraModel.fromJson(item));
+        }
       }
-    } on http.ClientException {
-      // Error de cliente HTTP (ej: el servidor no existe o problemas de DNS)
-      throw Exception('No se pudo establecer conexión con el servidor.');
-    } catch (e) {
-      // Captura timeouts o cualquier otra excepción de red
-      throw Exception('Fallo de red al intentar traducir en la nube.');
+    }
+
+    if (resultados.isNotEmpty) {
+      return resultados;
+    } else {
+      throw Exception('No se encontraron coincidencias para esta búsqueda.');
+    }
+  }
+}*/
+
+  Future<List<PalabraModel>> buscarTraduccionEnNube(String texto,
+      String direccion) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+
+    final String busqueda = texto.trim().toLowerCase();
+// Convertimos a minúsculas y limpiamos guiones para evitar fallos de formato
+    final String dirNormalizada = direccion.toLowerCase().replaceAll('-', '_');
+
+    List<PalabraModel> resultados = [];
+
+    for (var item in _diccionarioServidor) {
+// Si la dirección contiene 'es' primero, asumimos Español a Náhuatl
+      if (dirNormalizada.startsWith('es') ||
+          dirNormalizada.contains('to_nah')) {
+        if (item['termino_espanol'].toString().toLowerCase().contains(
+            busqueda)) {
+          resultados.add(PalabraModel.fromJson(item));
+        }
+      } else { // De lo contrario, asumimos Náhuatl a Español
+        if (item['termino_nahuatl'].toString().toLowerCase().contains(
+            busqueda)) {
+          resultados.add(PalabraModel.fromJson(item));
+        }
+      }
+    }
+
+    if (resultados.isNotEmpty) {
+      return resultados;
+    } else {
+      throw Exception('No se encontraron coincidencias para esta búsqueda.');
     }
   }
 }

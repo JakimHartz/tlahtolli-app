@@ -58,6 +58,7 @@ class TraductorViewModel extends ChangeNotifier {
       }
     } catch (e) {
       _mensajeError = e.toString().replaceAll('Exception:', '');
+      print("❌ ERROR REAL EN VIEWMODEL: $e");
     } finally {
       _estaCargando = false;
       notifyListeners();

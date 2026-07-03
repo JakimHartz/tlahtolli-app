@@ -24,9 +24,12 @@ class _TraductorScreenState extends State<TraductorScreen> {
     final query = _searchController.text.trim();
     if (query.isEmpty) return;
 
-    // Simulación de red: asumimos que hay internet (puedes cambiarlo a false para probar el fallback offline de SQLite)
+    // Simulación de red: asumimos que hay internet
     const bool tieneInternetSimulado = true;
 
+    // 🛠️ ¡CORRECCIÓN AQUÍ!: Le pasamos la dirección real activa (vm.direccionTraduccion)
+    // Nota: Revisa si tu método en el ViewModel acepta la dirección como tercer parámetro.
+    // Si tu método ejecutarTraduccion solo acepta 2 parámetros, asegúrate de que internamente use su propia variable de dirección.
     await vm.ejecutarTraduccion(query, tieneInternetSimulado);
 
     if (vm.mensajeError == null && vm.resultados.isNotEmpty) {
